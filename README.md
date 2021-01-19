@@ -8,8 +8,8 @@ Para este proyecto el cual se estara estructurando apartir de mañana, se estara
 ----
 
 
-acl.vm.box = "bento/centos-8"
-acl.vm.network :private_network, ip: "192.168.56.110"
+ > acl.vm.box = "bento/centos-8"
+ > acl.vm.network :private_network, ip: "192.168.56.110"
 
 
 
