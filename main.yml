@@ -1,0 +1,56 @@
+---
+- hosts: samba
+  remote_user: root
+  gather_facts: no
+
+
+  tasks:
+  - name: Cambiando modo del Selinux
+    lineinfile:
+      path: /etc/selinux/config
+      regexp: '^SELINUX='
+      line: SELINUX=disabled 
+
+  - name: Install epel repo
+    dnf: name=epel-release state=present
+
+  - name: Install samba
+    dnf: name=samba state=present
+
+
+  - name: stop service firewalld
+    systemd:
+      name: firewalld
+      state: stopped 
+      
+  - name: Started samba
+    systemd:
+      name: smb
+      state: started
+      enabled: yes
+
+  - name: Creates directory
+    file:
+      path: /opt/samba/public
+      state: directory
+      mode: '0755'
+
+
+  - name: Add configuration file
+    blockinfile:
+      dest: /etc/samba/smb.conf      
+      block: |
+        [global]
+        workgroup = WORKGROUP
+        server string = Samba Server %v
+        netbios name = samba-server
+        security = user
+        map to guest = bad user
+        dns proxy = no
+
+        [Publico]
+        path = /opt/samba/publico
+        browsable =yes
+        writable = yes
+        guest ok = yes
+        read only = no    
